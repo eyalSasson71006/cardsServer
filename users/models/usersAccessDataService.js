@@ -1,3 +1,4 @@
+const { generateAuthToken } = require("../../auth/providers/jwt");
 const User = require("./mongodb/User");
 
 const registerUser = async (newUser) => {
@@ -7,6 +8,21 @@ const registerUser = async (newUser) => {
         return user;
     } catch (error) {
         throw new Error("Mongoose " + error.message);
+    }
+};
+
+const loginUser = async (email, password) => {
+    try {
+        const user = await User.findOne({email: email});
+        if(!user) {
+            throw new Error("Authentication Error: Invalid email or password")
+        }
+        if (user.password !== password){
+            throw new Error("Authentication Error: Invalid email or password")
+        }
+        return generateAuthToken(user)
+    } catch (error) {
+        throw new Error(error);
     }
 };
 
@@ -28,4 +44,4 @@ const getUsers = async (userId) => {
     }
 };
 
-module.exports = { registerUser, getUsers, getUserById };
+module.exports = { registerUser, getUsers, getUserById, loginUser };

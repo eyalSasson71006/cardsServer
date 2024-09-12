@@ -6,6 +6,10 @@ const router = express.Router();
 
 router.post("/", auth, async (req, res) => {
     try {
+        const userInfo = req.user
+        if(!userInfo.isBusiness){
+            return res.status(403).send("Only business user can create new card")
+        }
         let card = await createCard(req.body);
         res.send(card);
     } catch (error) {
