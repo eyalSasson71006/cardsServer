@@ -1,9 +1,10 @@
 const express = require("express");
 const { createCard, getCards, getCard, getMyCards, updateCard, changeBizNumber, likeCard, deleteCard } = require("../models/cardsAccessDataService");
+const auth = require("../../auth/authService");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
     try {
         let card = await createCard(req.body);
         res.send(card);
@@ -21,7 +22,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-router.get("/my-cards", async (req, res) => {
+router.get("/my-cards",auth, async (req, res) => {
     try {
         const { id } = req.body;
         let cards = await getMyCards(id);
@@ -41,7 +42,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         let cards = await updateCard(id, req.body);
@@ -51,7 +52,7 @@ router.put("/:id", async (req, res) => {
     }
 });
 
-router.patch("/biz-number/:id", async (req, res) => {
+router.patch("/biz-number/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         let cards = await changeBizNumber(id, req.body);
@@ -61,7 +62,7 @@ router.patch("/biz-number/:id", async (req, res) => {
     }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         const { userId } = req.body;
@@ -72,7 +73,7 @@ router.patch("/:id", async (req, res) => {
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         let cards = await deleteCard(id);
