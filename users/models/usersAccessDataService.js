@@ -1,28 +1,29 @@
 const { generateAuthToken } = require("../../auth/providers/jwt");
+const { createError } = require("../../utils/handleErrors");
 const User = require("./mongodb/User");
+const _ = require("lodash");
 
 const registerUser = async (newUser) => {
     try {
         let user = new User(newUser);
         user = await user.save();
-        return user;
+        user = _.pick(user, ["email", "name", "_id"])
+        return (user);
     } catch (error) {
-        throw new Error("Mongoose " + error.message);
+        createError("Mongoose ", error)
     }
 };
 
 const loginUser = async (email, password) => {
     try {
         const user = await User.findOne({email: email});
-        if(!user) {
-            throw new Error("Authentication Error: Invalid email or password")
-        }
-        if (user.password !== password){
-            throw new Error("Authentication Error: Invalid email or password")
+        if (!user || user.password !== password) {
+            const error = new Error("Invalid email or password")
+            return createError("Authentication", error, 401)
         }
         return generateAuthToken(user)
     } catch (error) {
-        throw new Error(error);
+        createError("Mongoose ", error)
     }
 };
 
@@ -31,7 +32,7 @@ const getUserById = async (userId) => {
         let user = await User.findById(userId);
         return user;
     } catch (error) {
-        throw new Error("Mongoose " + error.message);
+        createError("Mongoose ", error)
     }
 };
 
@@ -40,7 +41,7 @@ const getUsers = async (userId) => {
         let user = await User.find();
         return user;
     } catch (error) {
-        throw new Error("Mongoose " + error.message);
+        createError("Mongoose ", error)
     }
 };
 
