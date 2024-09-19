@@ -2,6 +2,7 @@ const express = require("express");
 const { registerUser, getUsers, getUserById, loginUser } = require("../models/usersAccessDataService");
 const auth = require("../../auth/authService");
 const { handleError } = require("../../utils/handleErrors");
+const { validateRegistration, validateLogin } = require("../validation/userValidationService");
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.get("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         const userInfo = req.user;
-        if (userInfo._id !== id && !userInfo.isAdmin) {
+        if (userInfo._id != id && !userInfo.isAdmin) {
             return handleError(res, 403, "Authorization Error: Only an admin or the user itself can get its details");
         }
         const user = await getUserById(id);
@@ -39,6 +40,9 @@ router.get("/:id", auth, async (req, res) => {
 
 router.post("/", async (req, res) => {
     try {
+        const error = validateRegistration(req.body);
+        if (error) return handleError(res, 400, `Joi Error: ${error}`);
+
         const user = await registerUser(req.body);
         res.status(201).send(user);
     } catch (error) {
@@ -48,6 +52,9 @@ router.post("/", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     try {
+        const error = validateLogin(req.body);
+        if (error) return handleError(res, 400, `Joi Error: ${error}`);
+
         let { email, password } = req.body;
         const token = await loginUser(email, password);
         res.send(token);

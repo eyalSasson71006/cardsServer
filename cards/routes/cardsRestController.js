@@ -3,6 +3,7 @@ const { createCard, getCards, getCard, getMyCards, updateCard, changeBizNumber, 
 const auth = require("../../auth/authService");
 const normalizeCards = require("../helpers/normalizeCard");
 const { handleError } = require("../../utils/handleErrors");
+const validateCard = require("../validation/cardValidationService");
 
 const router = express.Router();
 
@@ -11,6 +12,10 @@ router.post("/", auth, async (req, res) => {
         const userInfo = req.user;
         if (!userInfo.isBusiness) {
             return handleError(res, 403, "Only business user can create new card");
+        }
+        const errorMessage = validateCard(req.body);
+        if (errorMessage !== "") {
+            return handleError(res, 400, "Validation error: " + errorMessage);
         }
         let card = await normalizeCards(req.body, userInfo._id);
         card = await createCard(card);
@@ -59,7 +64,7 @@ router.put("/:id", auth, async (req, res) => {
         const { id } = req.params;
         const newCard = req.body;
         const fullCardFromDb = await getCard(id);
-        if (userInfo._id !== fullCardFromDb.user_id && !userInfo.isAdmin) {
+        if (userInfo._id != fullCardFromDb.user_id && !userInfo.isAdmin) {
             return handleError(res, 403, "Authorization Error: Only the user who created the business card or admin can update its details");
         }
         let card = await normalizeCards(newCard, userInfo._id);
@@ -75,7 +80,7 @@ router.patch("/biz-number/:id", auth, async (req, res) => {
         const userInfo = req.user;
         const { id } = req.params;
         const fullCardFromDb = await getCard(id);
-        if (userInfo._id !== fullCardFromDb.user_id && !userInfo.isAdmin) {
+        if (userInfo._id != fullCardFromDb.user_id && !userInfo.isAdmin) {
             return handleError(res, 403, "Authorization Error: Only the user who created the business card or admin can update its bizNumber");
         }
         let cards = await changeBizNumber(id, req.body);
@@ -101,7 +106,7 @@ router.delete("/:id", auth, async (req, res) => {
         const { id } = req.params;
         const userInfo = req.user;
         const fullCardFromDb = await getCard(id);
-        if (userInfo._id !== fullCardFromDb.user_id && !userInfo.isAdmin) {
+        if (userInfo._id != fullCardFromDb.user_id && !userInfo.isAdmin) {
             return handleError(res, 403, "Authorization Error: Only the user who created the business card or admin can delete it");
         }
         let cards = await deleteCard(id);
