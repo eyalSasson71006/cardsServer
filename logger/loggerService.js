@@ -1,9 +1,11 @@
 const morganLogger = require("./loggers/morganLogger");
 
-const logger = "morgan"
+const config = require("config");
+
+const LOGGER = config.get("LOGGER");
 
 const loggerMiddleware = () => {
-    if (logger === "morgan") {
+    if (LOGGER === "morgan") {
         return morganLogger
     }
 };

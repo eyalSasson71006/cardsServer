@@ -3,6 +3,7 @@ const { registerUser, getUsers, getUserById, loginUser } = require("../models/us
 const auth = require("../../auth/authService");
 const { handleError } = require("../../utils/handleErrors");
 const { validateRegistration, validateLogin } = require("../validation/userValidationService");
+const normalizeUser = require("../helpers/normalizeCard");
 
 const router = express.Router();
 
@@ -43,7 +44,8 @@ router.post("/", async (req, res) => {
         const error = validateRegistration(req.body);
         if (error) return handleError(res, 400, `Joi Error: ${error}`);
 
-        const user = await registerUser(req.body);
+        let user = normalizeUser(req.body) 
+        user = await registerUser(user);
         res.status(201).send(user);
     } catch (error) {
         handleError(res, error.status || 400, error.message);
