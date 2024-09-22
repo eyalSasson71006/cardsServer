@@ -1,23 +1,22 @@
 const express = require("express");
-const { registerUser, getUsers, getUserById, loginUser } = require("../models/usersAccessDataService");
+const { registerUser, getUsers, getUserById, loginUser, deleteUser, editUser, toggleIsBusiness } = require("../models/usersAccessDataService");
 const auth = require("../../auth/authService");
 const { handleError } = require("../../utils/handleErrors");
-const { validateRegistration, validateLogin } = require("../validation/userValidationService");
+const { validateRegistration, validateLogin, validateEditUser } = require("../validation/userValidationService");
 const normalizeUser = require("../helpers/normalizeCard");
 
 const router = express.Router();
 
 router.get("/", auth, async (req, res) => {
     try {
-        // // only admin can - currently disabled for development
-        // const userInfo = req.user;
-        // if (!userInfo.isAdmin) {
-        //     return res
-        //         .status(403)
-        //         .send(
-        //             "Authorization Error: Only an admin can get all users details"
-        //         );
-        // }
+        const userInfo = req.user;
+        if (!userInfo.isAdmin) {
+            return res
+                .status(403)
+                .send(
+                    "Authorization Error: Only an admin can get all users details"
+                );
+        }
         const users = await getUsers();
         res.send(users);
     } catch (error) {
@@ -39,12 +38,58 @@ router.get("/:id", auth, async (req, res) => {
     }
 });
 
+router.delete("/:id", auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userInfo = req.user;
+        if (!userInfo.isAdmin) {
+            return handleError(res, 403, "Authorization Error: Only an admin can delete a user");
+        }
+        const user = await deleteUser(id);
+        res.send(user);
+    } catch (error) {
+        handleError(res, error.status || 400, error.message);
+    }
+});
+
+router.put("/:id", auth, async (req, res) => {
+    try {
+        const error = validateEditUser(req.body);
+        if (error) return handleError(res, 400, `Joi Error: ${error}`);
+
+        const { id } = req.params;
+        const newUser = req.body;
+        const userInfo = req.user;
+        if (userInfo._id != id && !userInfo.isAdmin) {
+            return handleError(res, 403, "Authorization Error: Only an admin or the user itself can edit a user");
+        }
+        const user = await editUser(id, newUser);
+        res.send(user);
+    } catch (error) {
+        handleError(res, error.status || 400, error.message);
+    }
+});
+
+router.patch("/:id", auth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userInfo = req.user;
+        if (!userInfo.isAdmin) {
+            return handleError(res, 403, "Authorization Error: Only an admin can edit a user's business status");
+        }
+        const user = await toggleIsBusiness(id);
+        res.send(user);
+    } catch (error) {
+        handleError(res, error.status || 400, error.message);
+    }
+});
+
 router.post("/", async (req, res) => {
     try {
         const error = validateRegistration(req.body);
         if (error) return handleError(res, 400, `Joi Error: ${error}`);
 
-        let user = normalizeUser(req.body) 
+        let user = normalizeUser(req.body);
         user = await registerUser(user);
         res.status(201).send(user);
     } catch (error) {

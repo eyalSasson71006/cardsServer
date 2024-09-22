@@ -47,4 +47,33 @@ const getUsers = async () => {
     }
 };
 
-module.exports = { registerUser, getUsers, getUserById, loginUser };
+const editUser = async (userId, updatedUser) => {
+    try {
+        let user = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+        return user;
+    } catch (error) {
+        createError("Mongoose ", error)
+    }
+};
+
+const deleteUser = async (userId) => {
+    try {
+        let user = await User.findByIdAndDelete(userId);
+        return user;
+    } catch (error) {
+        createError("Mongoose ", error);
+    }
+};
+
+const toggleIsBusiness = async (userId) => {
+    try {
+        let user = await User.findById(userId);
+        user.isBusiness = !user.isBusiness;
+        await user.save()
+        return user;
+    } catch (error) {
+        createError("Mongoose ", error);
+    }
+};
+
+module.exports = { registerUser, getUsers, getUserById, loginUser, editUser, deleteUser, toggleIsBusiness };
