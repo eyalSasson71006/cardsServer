@@ -3,7 +3,7 @@ const { registerUser, getUsers, getUserById, loginUser, deleteUser, editUser, to
 const auth = require("../../auth/authService");
 const { handleError } = require("../../utils/handleErrors");
 const { validateRegistration, validateLogin, validateEditUser } = require("../validation/userValidationService");
-const normalizeUser = require("../helpers/normalizeCard");
+const normalizeUser = require("../helpers/normalizeUser");
 
 const router = express.Router();
 
