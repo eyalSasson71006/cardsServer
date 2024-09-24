@@ -4,10 +4,11 @@ const router = require("./router/router");
 const corsMiddleware = require("./middlewares/cors");
 const { handleError } = require("./utils/handleErrors");
 const chalk = require("chalk");
+require("dotenv").config();
 const loggerMiddleware = require("./logger/loggerService");
 
 const app = express();
-const PORT = 8181;
+const PORT = process.env.PORT || 8181;
 
 app.use(corsMiddleware);
 app.use(express.json());
