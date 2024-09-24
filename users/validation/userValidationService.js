@@ -2,7 +2,7 @@ const registerValidation = require("./Joi/registerValidation");
 const loginValidation = require("./Joi/loginValidation");
 
 const config = require("config");
-const editUserValidation = require("./joi/editUserValidation");
+const editUserValidation = require("./Joi/editUserValidation");
 
 const VALIDATOR = config.get("VALIDATOR");
 
