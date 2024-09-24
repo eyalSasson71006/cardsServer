@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { PHONE, DEFAULT_VALIDATION, EMAIL, URL } = require("../../../helpers/mongodb/mongooseValidators");
 const Image = require("../../../helpers/mongodb/Image");
-const Address = require("../../../helpers/mongodb/address");
+const Address = require("../../../helpers/mongodb/Address");
 
 const cardSchema = new mongoose.Schema({
     title: DEFAULT_VALIDATION,
@@ -33,6 +33,6 @@ const cardSchema = new mongoose.Schema({
 
 });
 
-const Card = mongoose.model("card", cardSchema)
+const Card = mongoose.model("card", cardSchema);
 
 module.exports = Card;

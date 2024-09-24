@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const { PHONE, EMAIL } = require("../../../helpers/mongodb/mongooseValidators");
 const Image = require("../../../helpers/mongodb/Image");
-const Address = require("../../../helpers/mongodb/address");
-const Name = require("../../../helpers/mongodb/name");
+const Address = require("../../../helpers/mongodb/Address");
+const Name = require("../../../helpers/mongodb/Name");
 
 const userSchema = new mongoose.Schema({
     name: Name,
