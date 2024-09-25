@@ -42,8 +42,8 @@ router.delete("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         const userInfo = req.user;
-        if (!userInfo.isAdmin) {
-            return handleError(res, 403, "Authorization Error: Only an admin can delete a user");
+        if (userInfo._id != id && !userInfo.isAdmin) {
+            return handleError(res, 403, "Authorization Error: Only the user itself or an admin can delete a user");
         }
         const user = await deleteUser(id);
         res.send(user);
@@ -60,8 +60,8 @@ router.put("/:id", auth, async (req, res) => {
         const { id } = req.params;
         const newUser = req.body;
         const userInfo = req.user;
-        if (userInfo._id != id && !userInfo.isAdmin) {
-            return handleError(res, 403, "Authorization Error: Only an admin or the user itself can edit a user");
+        if (userInfo._id != id) {
+            return handleError(res, 403, "Authorization Error: Only the user itself can edit a user");
         }
         const user = await editUser(id, newUser);
         res.send(user);
@@ -74,8 +74,8 @@ router.patch("/:id", auth, async (req, res) => {
     try {
         const { id } = req.params;
         const userInfo = req.user;
-        if (!userInfo.isAdmin) {
-            return handleError(res, 403, "Authorization Error: Only an admin can edit a user's business status");
+        if (userInfo._id != id) {
+            return handleError(res, 403, "Authorization Error: Only the user itself can edit it's business status");
         }
         const user = await toggleIsBusiness(id);
         res.send(user);
