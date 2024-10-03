@@ -5,7 +5,7 @@ const config = require("config");
 const LOGGER = config.get("LOGGER");
 
 const loggerMiddleware = () => {
-    if (LOGGER === "morgan") {
+    if (LOGGER === "morgan") {        
         return morganLogger
     }
 };

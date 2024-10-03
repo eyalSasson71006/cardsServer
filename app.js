@@ -14,7 +14,7 @@ app.use(corsMiddleware);
 app.use(express.json());
 
 app.use(loggerMiddleware());
-
+app.use(express.static("./public"));
 app.use(router);
 
 app.use((err, req, res, next) => {  //error handling

@@ -1,0 +1,3 @@
+2024/10/03 22:18:26 | Status: 400 | Bad Request
+2024/10/03 22:18:55 | Status: 400 | Bad Request
+2024/10/03 22:20:36 | Status: 401 | Unauthorized
