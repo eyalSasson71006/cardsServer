@@ -4,6 +4,7 @@ const auth = require("../../auth/authService");
 const normalizeCards = require("../helpers/normalizeCard");
 const { handleError } = require("../../utils/handleErrors");
 const validateCard = require("../validation/cardValidationService");
+const { isBizNumberExists } = require("../helpers/generateBizNumber");
 
 const router = express.Router();
 
@@ -77,6 +78,9 @@ router.put("/:id", auth, async (req, res) => {
 
 router.patch("/biz-number/:id", auth, async (req, res) => {
     try {
+        if (await isBizNumberExists(req.body.bizNumber)) {
+            return handleError(res, 400, "Business number already exists");
+        };
         const userInfo = req.user;
         const { id } = req.params;
         const fullCardFromDb = await getCard(id);

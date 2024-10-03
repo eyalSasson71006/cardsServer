@@ -15,7 +15,7 @@ const generateBizNumber = async () => {
 };
 const isBizNumberExists = async (bizNumber) => {
     try {
-        const cardWithThisBizNumber = await Card.findOne({ bizNumber });
+        const cardWithThisBizNumber = await Card.findOne({ bizNumber });        
         return Boolean(cardWithThisBizNumber);
     } catch (error) {
         createError("Mongoose", error, 500)
