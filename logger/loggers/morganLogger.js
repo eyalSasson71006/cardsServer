@@ -1,7 +1,6 @@
 const morgan = require("morgan");
 const { currentTime } = require("../../utils/timeHelper");
 const chalk = require("chalk");
-const fileLogger = require("../fileLogger");
 
 const morganLogger = morgan(function (tokens, req, res) {
     const { year, month, day, hours, minutes, seconds } = currentTime();
@@ -13,7 +12,6 @@ const morganLogger = morgan(function (tokens, req, res) {
         tokens['response-time'](req, res), 'ms'
     ].join(' ');
 
-    fileLogger(tokens.status(req, res), res.statusMessage);
     return tokens.status(req, res) >= 400 ? chalk.redBright(log) : chalk.cyanBright(log);
 });
 

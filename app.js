@@ -6,12 +6,14 @@ const { handleError } = require("./utils/handleErrors");
 const chalk = require("chalk");
 require("dotenv").config();
 const loggerMiddleware = require("./logger/loggerService");
+const fileLogger = require("./logger/fileLogger");
 
 const app = express();
 const PORT = process.env.PORT || 8181;
 
 app.use(corsMiddleware);
 app.use(express.json());
+app.use(fileLogger);
 
 app.use(loggerMiddleware());
 app.use(express.static("./public"));
