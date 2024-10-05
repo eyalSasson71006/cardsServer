@@ -7,6 +7,7 @@ const chalk = require("chalk");
 require("dotenv").config();
 const loggerMiddleware = require("./logger/loggerService");
 const fileLogger = require("./logger/fileLogger");
+const createInitialData = require("./helpers/initialData/createInitialData");
 
 const app = express();
 const PORT = process.env.PORT || 8181;
@@ -27,4 +28,5 @@ app.use((err, req, res, next) => {  //error handling
 app.listen(PORT, () => {
     console.log(chalk.yellow("server is listening to port " + PORT));
     connectToDb();
+    createInitialData();
 });
